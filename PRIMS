@@ -1,0 +1,39 @@
+class Solution {
+  public:
+    int spanningTree(int V, vector<vector<int>>& edges) {
+        // code here
+        priority_queue<pair<int,pair<int,int>>,vector<pair<int,pair<int,int>>>,greater<pair<int,pair<int,int>>>> pq;
+        vector<vector<pair<int,int>>> adj(V);
+        for(auto &e : edges){
+            int u = e[0], v = e[1], w = e[2];
+            adj[u].push_back({v,w});
+            adj[v].push_back({u,w}); // undirected
+        }
+        vector<bool> ismst(V,0);
+        vector<int> par(V);
+        int cost=0;
+        
+        pq.push({0,{0,-1}});
+        
+        while(!pq.empty()){
+            int wt=pq.top().first;
+            int node=pq.top().second.first;
+            int par=pq.top().second.second;
+            pq.pop();
+            
+            if(!ismst[node]){
+                cost+=wt;
+                ismst[node]=1;
+                par[node]=par;
+                for(int i=0;i<adj[node].size();i++){
+                    int k = adj[node][i].first;   // neighbor
+                    int w = adj[node][i].second;  // weight
+                    if(!ismst[k]){
+                       pq.push({w, {k, node}});
+                    }
+                }
+            }
+        }
+        return cost;
+    }
+};
